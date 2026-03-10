@@ -1,142 +1,147 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Profiles</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biodata Listings</title>
+
 <style>
-  body { font-family: Arial; padding: 20px; background:#f9f9f9; }
-  .profile { border:1px solid #ccc; padding:10px; margin-bottom:10px; border-radius:5px; background:#fff; }
-  .bio { white-space: pre-wrap; }
-  .expand { color:blue; cursor:pointer; display:inline-block; margin-top:5px; }
-  .loading { font-size: 18px; font-weight:bold; color: #555; }
-  .filters { margin-bottom:20px; }
-  label { margin-right:10px; }
+body{font-family:Arial;margin:20px;background:#f4f4f4;}
+h1{text-align:center;}
+.controls{margin-bottom:20px;background:white;padding:15px;border-radius:8px;}
+.profile{background:white;padding:15px;margin-bottom:15px;border-radius:8px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);opacity:0;transition:opacity 0.5s ease-in;}
+button{margin-top:10px;padding:6px 10px;cursor:pointer;}
+#loading{font-size:18px;text-align:center;padding:20px;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.5;}}
+.age-slider-container{position:relative;height:40px;}
+.age-slider-container input[type=range]{position:absolute;width:100%;pointer-events:none;}
+.age-slider-container input[type=range]::-webkit-slider-thumb{pointer-events:auto;}
+.age-range-display{margin-top:5px;}
 </style>
 </head>
 <body>
 
-<h2>Profiles</h2>
-<div class="filters">
-  Gender:
-  <label><input type="radio" name="gender" value="all" checked>All</label>
-  <label><input type="radio" name="gender" value="male">Male</label>
-  <label><input type="radio" name="gender" value="female">Female</label>
-  <br><br>
-  Age: <span id="ageRange">0-100</span><br>
-  <input type="range" id="ageSliderMin" min="0" max="100" value="0"> 
-  <input type="range" id="ageSliderMax" min="0" max="100" value="100">
-  <br><br>
-  Region:
-  <label><input type="checkbox" class="region" value="USA" checked>USA</label>
-  <label><input type="checkbox" class="region" value="Canada" checked>Canada</label>
+<h1>Biodata Listings</h1>
+
+<div class="controls">
+
+<!-- Gender Radio Buttons -->
+Gender: 
+<label><input type="radio" name="gender" value="all" checked onchange="renderProfiles()">All</label>
+<label><input type="radio" name="gender" value="male" onchange="renderProfiles()">Male</label>
+<label><input type="radio" name="gender" value="female" onchange="renderProfiles()">Female</label>
+
+<br><br>
+
+<!-- Age slider with two ends -->
+Age Range: <span id="ageDisplay">18 - 60</span>
+<div class="age-slider-container">
+  <input type="range" id="ageMin" min="18" max="60" value="18" oninput="updateAgeSlider()">
+  <input type="range" id="ageMax" min="18" max="60" value="60" oninput="updateAgeSlider()">
 </div>
 
-<div id="loading" class="loading">Loading profiles...</div>
-<div id="profiles"></div>
+<br><br>
+
+<!-- Region checkboxes -->
+Region: 
+<label><input type="checkbox" class="regionFilter" value="USA" checked onchange="renderProfiles()">USA</label>
+<label><input type="checkbox" class="regionFilter" value="Canada" checked onchange="renderProfiles()">Canada</label>
+
+</div>
+
+<div id="profiles">
+  <div id="loading">✨ Loading biodata... ✨</div>
+</div>
 
 <script>
 let profiles = [];
 
-function fetchProfiles() {
-  fetch('YOUR_WEB_APP_URL_HERE') // replace with your Apps Script Web App URL
-    .then(res => res.json())
-    .then(data => {
-      profiles = data;
-      document.getElementById('loading').style.display = 'none';
-      renderProfiles();
-    })
-    .catch(err => {
-      document.getElementById('loading').textContent = "❌ Could not load profiles.";
-      console.error(err);
-    });
+// Fetch profiles from Apps Script
+async function loadProfiles(){
+  const container = document.getElementById("profiles");
+  container.innerHTML = '<div id="loading">✨ Loading biodata... ✨</div>';
+
+  try{
+    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQXrutZx8GnbVnmTGEvG0ERUqF1dGBOpkpH4SmBZAYCmvT4uTXP5JZZEzEmymaDLWT2XbKKxcsZ_FW447wxC74_sw27c7ACwD_gfNbqmgAYdwXaEPefrjt6FmIMPt04R7yAyt4CgrMiJIlPHk8pszzJo5XN7r0BgHuCJPwP6ob9PYg8StBEeAgjgyClWaIoeFDjZ85zYfp2fPYYBMhCvN-9V-_RZN9aqnczsc8MODiYWm8L90E7WOHfTvtZPxuBAGo7wwZifG7kjm_KbUr8qaW1mEKRWRxa683yUUib&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace this
+    profiles = await res.json();
+    renderProfiles();
+  }catch(e){
+    container.innerHTML = "❌ Could not load profiles.";
+  }
 }
 
-function renderProfiles() {
-  const container = document.getElementById('profiles');
-  container.innerHTML = '';
+// Update age slider display
+function updateAgeSlider(){
+  let min = parseInt(document.getElementById("ageMin").value);
+  let max = parseInt(document.getElementById("ageMax").value);
+  if(min>max)[min,max]=[max,min];
+  document.getElementById("ageDisplay").innerText = min + " - " + max;
+  renderProfiles();
+}
 
-  const genderFilter = document.querySelector('input[name="gender"]:checked').value;
-  const minAge = parseInt(document.getElementById('ageSliderMin').value);
-  const maxAge = parseInt(document.getElementById('ageSliderMax').value);
-  const regions = Array.from(document.querySelectorAll('.region:checked')).map(cb => cb.value);
-
-  const filtered = profiles.filter(p => 
-    (genderFilter==='all' || p.gender===genderFilter) &&
-    p.age >= minAge && p.age <= maxAge &&
-    regions.includes(p.region)
-  );
-
-  if(filtered.length===0){
-    container.innerHTML = '<p>No profiles found.</p>';
-    return;
-  }
-
-  filtered.forEach((p, idx) => {
-    const div = document.createElement('div');
-    div.className = 'profile';
-
-    // Show first 5 lines
-    const lines = p.bio.split('\n');
-    const first5 = lines.slice(0,5).join('\n');
-
-    const bioDiv = document.createElement('div');
-    bioDiv.className = 'bio';
-    bioDiv.textContent = first5;
-
-    const expand = document.createElement('span');
-    expand.className = 'expand';
-    expand.textContent = 'Read More';
-    expand.onclick = () => {
-      if(bioDiv.textContent===first5){
-        bioDiv.textContent = p.bio;
-        expand.textContent = 'Show Less';
-      } else {
-        bioDiv.textContent = first5;
-        expand.textContent = 'Read More';
-      }
-    };
-
-    // Phone display / clickable
-    const phoneDiv = document.createElement('div');
-    if(p.phone){
-      p.phone.split(',').forEach(ph=>{
-        const a = document.createElement('a');
-        a.href = 'tel:'+ph.replace(/\D/g,'');
-        a.textContent = ph.trim();
-        a.style.display = 'block';
-        phoneDiv.appendChild(a);
-      });
-    }
-
-    div.appendChild(bioDiv);
-    div.appendChild(expand);
-    div.appendChild(phoneDiv);
-    container.appendChild(div);
+// Make phone numbers clickable
+function makePhoneClickable(text){
+  return text.replace(/(\+?\d[\d\s\-]{7,}\d)/g,function(phone){
+    let clean = phone.replace(/\s+/g,"");
+    return `<a href="tel:${clean}">${phone}</a>`;
   });
 }
 
-// --- Event listeners ---
-document.querySelectorAll('input[name="gender"]').forEach(r => r.onchange = renderProfiles);
-document.getElementById('ageSliderMin').oninput = () => {
-  const maxSlider = document.getElementById('ageSliderMax');
-  if(parseInt(maxSlider.value) < parseInt(document.getElementById('ageSliderMin').value)){
-    maxSlider.value = document.getElementById('ageSliderMin').value;
-  }
-  document.getElementById('ageRange').textContent = `${document.getElementById('ageSliderMin').value}-${maxSlider.value}`;
-  renderProfiles();
-};
-document.getElementById('ageSliderMax').oninput = () => {
-  const minSlider = document.getElementById('ageSliderMin');
-  if(parseInt(minSlider.value) > parseInt(document.getElementById('ageSliderMax').value)){
-    minSlider.value = document.getElementById('ageSliderMax').value;
-  }
-  document.getElementById('ageRange').textContent = `${minSlider.value}-${document.getElementById('ageSliderMax').value}`;
-  renderProfiles();
-};
-document.querySelectorAll('.region').forEach(cb => cb.onchange = renderProfiles);
+// Render profiles with filters
+function renderProfiles(){
+  const genderFilter = document.querySelector('input[name="gender"]:checked').value;
+  let minAge = parseInt(document.getElementById("ageMin").value);
+  let maxAge = parseInt(document.getElementById("ageMax").value);
+  if(minAge>maxAge)[minAge,maxAge]=[maxAge,minAge];
+  const selectedRegions = Array.from(document.querySelectorAll(".regionFilter:checked")).map(cb=>cb.value);
 
-// --- Initial fetch ---
-fetchProfiles();
+  const container = document.getElementById("profiles");
+  container.innerHTML="";
+
+  let filteredCount=0;
+
+  profiles.forEach(profile=>{
+    if(genderFilter!=="all" && profile.gender!==genderFilter) return;
+    if(profile.age<minAge || profile.age>maxAge) return;
+    if(selectedRegions.length>0 && !selectedRegions.includes(profile.region)) return;
+
+    filteredCount++;
+
+    const lines = profile.bio.split("\n");
+    const preview = makePhoneClickable(lines.slice(0,5).join("<br>"));
+    const full = makePhoneClickable(lines.join("<br>"));
+
+    const div = document.createElement("div");
+    div.className="profile";
+    div.innerHTML = `<div class="bio">${preview}</div><button>Read Full Biodata</button>`;
+
+    const btn = div.querySelector("button");
+    const bio = div.querySelector(".bio");
+    let expanded=false;
+
+    btn.onclick = ()=>{
+      if(!expanded){
+        bio.innerHTML=full;
+        btn.innerText="Show Less";
+        expanded=true;
+      }else{
+        bio.innerHTML=preview;
+        btn.innerText="Read Full Biodata";
+        expanded=false;
+      }
+    };
+
+    container.appendChild(div);
+    setTimeout(()=>{div.style.opacity=1;},50); // fade in
+  });
+
+  if(filteredCount===0){
+    container.innerHTML="<div id='loading'>No profiles match your filters.</div>";
+  }
+}
+
+loadProfiles();
 </script>
 </body>
 </html>
