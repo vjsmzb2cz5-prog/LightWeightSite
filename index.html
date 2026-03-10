@@ -73,22 +73,21 @@ let profiles = [];
 
 async function loadProfiles() {
   const container = document.getElementById("profiles");
+  
+  // Show loading immediately
   container.innerHTML = '<div id="loading">✨ Loading biodata... ✨</div>';
 
   try {
-    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQvDGyPGmb_stXhG2i9ZY17A_m0nAOaSIjIgZBSrwTdbQqBYiN55swc3QF1my7HyZNHNpe2OjcFIepgMxX7uedD-ZxHL34uZwkLKBLpfOv6iBGMfUj5wDsgLDR9RGmNqNZVkB8UoV92Xs5-u2KKfspoKZRXrpm2yXt3hh1LYEwzps-z2BDLzUvoE2_NfeuzlCL4yT4I4PcT71Zn5dZDl756Br61NVW6tOVqXjufo8Ihmv-jlroe7f0fhzaSDgGjMwMJ26Qulm8Z4ZUYl6MAmT66onzB-Tew4ZXAE_RW&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N");
+    const res = await fetch("YOUR_APPS_SCRIPT_URL");
     profiles = await res.json();
 
-    // Ensure loading shows at least 5 seconds
-    const start = Date.now();
-    renderProfiles();
-    const elapsed = Date.now() - start;
-    const remaining = 5000 - elapsed;
-    if (remaining > 0) {
-      await new Promise(r => setTimeout(r, remaining));
-    }
+    // Wait at least 5 seconds before showing profiles
+    await new Promise(r => setTimeout(r, 5000));
 
-    // Fade-in profiles
+    // Now render profiles after loading
+    renderProfiles();
+
+    // Fade-in effect
     const profileDivs = document.querySelectorAll(".profile");
     profileDivs.forEach(div => div.style.opacity = 1);
 
@@ -156,3 +155,4 @@ loadProfiles();
 </script>
 </body>
 </html>
+
