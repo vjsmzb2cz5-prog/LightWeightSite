@@ -6,48 +6,18 @@
 <title>Biodata Listings</title>
 
 <style>
-body{
-  font-family:Arial;
-  margin:20px;
-  background:#f4f4f4;
-}
-h1{
-  text-align:center;
-}
-.controls{
-  margin-bottom:20px;
-  background:white;
-  padding:15px;
-  border-radius:8px;
-}
-.profile{
-  background:white;
-  padding:15px;
-  margin-bottom:15px;
-  border-radius:8px;
-  box-shadow:0 2px 5px rgba(0,0,0,0.1);
-  opacity:0;
-  transition: opacity 0.5s ease-in;
-}
-button{
-  margin-top:10px;
-  padding:6px 10px;
-  cursor:pointer;
-}
-#loading{
-  font-size:18px;
-  text-align:center;
-  padding:20px;
-  animation: blink 1s infinite;
-}
-@keyframes blink {
-  0%, 100% { opacity:1; }
-  50% { opacity:0.5; }
-}
+body{font-family:Arial;margin:20px;background:#f4f4f4;}
+h1{text-align:center;}
+.controls{margin-bottom:20px;background:white;padding:15px;border-radius:8px;}
+.profile{background:white;padding:15px;margin-bottom:15px;border-radius:8px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);opacity:0;transition:opacity 0.5s ease-in;}
+button{margin-top:10px;padding:6px 10px;cursor:pointer;}
+#loading{font-size:18px;text-align:center;padding:20px;animation:blink 1s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.5;}}
 </style>
 </head>
-
 <body>
+
 <h1>Biodata Listings</h1>
 
 <div class="controls">
@@ -71,39 +41,32 @@ Age Range:
 <script>
 let profiles = [];
 
-async function loadProfiles() {
+// Fetch and render profiles
+async function loadProfiles(){
   const container = document.getElementById("profiles");
-  
-  // Show loading immediately
   container.innerHTML = '<div id="loading">✨ Loading biodata... ✨</div>';
 
-  try {
-    const res = await fetch("YOUR_APPS_SCRIPT_URL");
+  try{
+    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQvDGyPGmb_stXhG2i9ZY17A_m0nAOaSIjIgZBSrwTdbQqBYiN55swc3QF1my7HyZNHNpe2OjcFIepgMxX7uedD-ZxHL34uZwkLKBLpfOv6iBGMfUj5wDsgLDR9RGmNqNZVkB8UoV92Xs5-u2KKfspoKZRXrpm2yXt3hh1LYEwzps-z2BDLzUvoE2_NfeuzlCL4yT4I4PcT71Zn5dZDl756Br61NVW6tOVqXjufo8Ihmv-jlroe7f0fhzaSDgGjMwMJ26Qulm8Z4ZUYl6MAmT66onzB-Tew4ZXAE_RW&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace with your Apps Script URL
     profiles = await res.json();
 
-    // Wait at least 5 seconds before showing profiles
-    await new Promise(r => setTimeout(r, 5000));
-
-    // Now render profiles after loading
+    // Once profiles loaded, remove loading
     renderProfiles();
-
-    // Fade-in effect
-    const profileDivs = document.querySelectorAll(".profile");
-    profileDivs.forEach(div => div.style.opacity = 1);
-
-  } catch (e) {
+  } catch(e){
     container.innerHTML = "❌ Could not load profiles.";
   }
 }
 
+// Update age range display
 function updateAge(){
-  let min = document.getElementById("minAge").value;
-  let max = document.getElementById("maxAge").value;
-  if(parseInt(min) > parseInt(max)) [min,max]=[max,min];
+  let min = parseInt(document.getElementById("minAge").value);
+  let max = parseInt(document.getElementById("maxAge").value);
+  if(min>max)[min,max]=[max,min];
   document.getElementById("ageDisplay").innerText = min + " - " + max;
   renderProfiles();
 }
 
+// Make phone numbers clickable
 function makePhoneClickable(text){
   return text.replace(/(\+?\d[\d\s\-]{7,}\d)/g,function(phone){
     let clean = phone.replace(/\s+/g,"");
@@ -111,17 +74,22 @@ function makePhoneClickable(text){
   });
 }
 
+// Render profiles with filters
 function renderProfiles(){
   const genderFilter = document.getElementById("genderFilter").value;
   let minAge = parseInt(document.getElementById("minAge").value);
   let maxAge = parseInt(document.getElementById("maxAge").value);
-  if(minAge > maxAge) [minAge,maxAge]=[maxAge,minAge];
+  if(minAge>maxAge)[minAge,maxAge]=[maxAge,minAge];
+
   const container = document.getElementById("profiles");
   container.innerHTML="";
 
+  let filteredCount=0;
   profiles.forEach(profile=>{
     if(genderFilter!=="all" && profile.gender!==genderFilter) return;
-    if(profile.age < minAge || profile.age > maxAge) return;
+    if(profile.age<minAge || profile.age>maxAge) return;
+
+    filteredCount++;
 
     const lines = profile.bio.split("\n");
     const preview = makePhoneClickable(lines.slice(0,5).join("<br>"));
@@ -140,7 +108,7 @@ function renderProfiles(){
         bio.innerHTML=full;
         btn.innerText="Show Less";
         expanded=true;
-      } else {
+      } else{
         bio.innerHTML=preview;
         btn.innerText="Read Full Biodata";
         expanded=false;
@@ -148,11 +116,15 @@ function renderProfiles(){
     };
 
     container.appendChild(div);
+    setTimeout(()=>{div.style.opacity=1;},50); // fade in
   });
+
+  if(filteredCount===0){
+    container.innerHTML="<div id='loading'>No profiles match your filters.</div>";
+  }
 }
 
 loadProfiles();
 </script>
 </body>
 </html>
-
