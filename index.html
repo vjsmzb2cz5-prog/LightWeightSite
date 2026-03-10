@@ -63,11 +63,16 @@ async function loadProfiles(){
   container.innerHTML = '<div id="loading">✨ Loading biodata... ✨</div>';
 
   try{
-    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQXrutZx8GnbVnmTGEvG0ERUqF1dGBOpkpH4SmBZAYCmvT4uTXP5JZZEzEmymaDLWT2XbKKxcsZ_FW447wxC74_sw27c7ACwD_gfNbqmgAYdwXaEPefrjt6FmIMPt04R7yAyt4CgrMiJIlPHk8pszzJo5XN7r0BgHuCJPwP6ob9PYg8StBEeAgjgyClWaIoeFDjZ85zYfp2fPYYBMhCvN-9V-_RZN9aqnczsc8MODiYWm8L90E7WOHfTvtZPxuBAGo7wwZifG7kjm_KbUr8qaW1mEKRWRxa683yUUib&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace this
+    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQXrutZx8GnbVnmTGEvG0ERUqF1dGBOpkpH4SmBZAYCmvT4uTXP5JZZEzEmymaDLWT2XbKKxcsZ_FW447wxC74_sw27c7ACwD_gfNbqmgAYdwXaEPefrjt6FmIMPt04R7yAyt4CgrMiJIlPHk8pszzJo5XN7r0BgHuCJPwP6ob9PYg8StBEeAgjgyClWaIoeFDjZ85zYfp2fPYYBMhCvN-9V-_RZN9aqnczsc8MODiYWm8L90E7WOHfTvtZPxuBAGo7wwZifG7kjm_KbUr8qaW1mEKRWRxa683yUUib&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace with your Web App URL
     profiles = await res.json();
+
+    // --- NEW: Sort newest first ---
+    profiles.sort((a,b) => new Date(b.time) - new Date(a.time));
+
     renderProfiles();
   }catch(e){
     container.innerHTML = "❌ Could not load profiles.";
+    console.error(e);
   }
 }
 
