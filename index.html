@@ -38,10 +38,12 @@
 let profiles = [];
 
 function fetchProfiles() {
-  fetch('YOUR_WEB_APP_URL_HERE') // replace with your Apps Script Web App URL
+  fetch('https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQXrutZx8GnbVnmTGEvG0ERUqF1dGBOpkpH4SmBZAYCmvT4uTXP5JZZEzEmymaDLWT2XbKKxcsZ_FW447wxC74_sw27c7ACwD_gfNbqmgAYdwXaEPefrjt6FmIMPt04R7yAyt4CgrMiJIlPHk8pszzJo5XN7r0BgHuCJPwP6ob9PYg8StBEeAgjgyClWaIoeFDjZ85zYfp2fPYYBMhCvN-9V-_RZN9aqnczsc8MODiYWm8L90E7WOHfTvtZPxuBAGo7wwZifG7kjm_KbUr8qaW1mEKRWRxa683yUUib&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N') // replace with your Apps Script Web App URL
     .then(res => res.json())
     .then(data => {
-      profiles = data;
+      // Sort newest first
+      profiles = data.sort((a,b) => new Date(b.time) - new Date(a.time));
+
       document.getElementById('loading').style.display = 'none';
       renderProfiles();
     })
@@ -140,3 +142,4 @@ fetchProfiles();
 </script>
 </body>
 </html>
+
