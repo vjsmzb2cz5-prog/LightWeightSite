@@ -76,7 +76,7 @@ let profiles = [];
 
 async function loadProfiles(){
 
-const res = await fetch("PASTE_YOUR_APPS_SCRIPT_URL_HERE");
+const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQvDGyPGmb_stXhG2i9ZY17A_m0nAOaSIjIgZBSrwTdbQqBYiN55swc3QF1my7HyZNHNpe2OjcFIepgMxX7uedD-ZxHL34uZwkLKBLpfOv6iBGMfUj5wDsgLDR9RGmNqNZVkB8UoV92Xs5-u2KKfspoKZRXrpm2yXt3hh1LYEwzps-z2BDLzUvoE2_NfeuzlCL4yT4I4PcT71Zn5dZDl756Br61NVW6tOVqXjufo8Ihmv-jlroe7f0fhzaSDgGjMwMJ26Qulm8Z4ZUYl6MAmT66onzB-Tew4ZXAE_RW&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N");
 
 profiles = await res.json();
 
