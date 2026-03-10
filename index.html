@@ -63,7 +63,7 @@ async function loadProfiles(){
   container.innerHTML = '<div id="loading">✨ Loading biodata... ✨</div>';
 
   try{
-    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQvDGyPGmb_stXhG2i9ZY17A_m0nAOaSIjIgZBSrwTdbQqBYiN55swc3QF1my7HyZNHNpe2OjcFIepgMxX7uedD-ZxHL34uZwkLKBLpfOv6iBGMfUj5wDsgLDR9RGmNqNZVkB8UoV92Xs5-u2KKfspoKZRXrpm2yXt3hh1LYEwzps-z2BDLzUvoE2_NfeuzlCL4yT4I4PcT71Zn5dZDl756Br61NVW6tOVqXjufo8Ihmv-jlroe7f0fhzaSDgGjMwMJ26Qulm8Z4ZUYl6MAmT66onzB-Tew4ZXAE_RW&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace this
+    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQXrutZx8GnbVnmTGEvG0ERUqF1dGBOpkpH4SmBZAYCmvT4uTXP5JZZEzEmymaDLWT2XbKKxcsZ_FW447wxC74_sw27c7ACwD_gfNbqmgAYdwXaEPefrjt6FmIMPt04R7yAyt4CgrMiJIlPHk8pszzJo5XN7r0BgHuCJPwP6ob9PYg8StBEeAgjgyClWaIoeFDjZ85zYfp2fPYYBMhCvN-9V-_RZN9aqnczsc8MODiYWm8L90E7WOHfTvtZPxuBAGo7wwZifG7kjm_KbUr8qaW1mEKRWRxa683yUUib&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace this
     profiles = await res.json();
     renderProfiles();
   }catch(e){
@@ -145,3 +145,4 @@ loadProfiles();
 </script>
 </body>
 </html>
+
