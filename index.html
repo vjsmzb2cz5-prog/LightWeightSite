@@ -47,7 +47,7 @@ async function loadProfiles(){
   container.innerHTML = '<div id="loading">✨ Loading biodata... ✨</div>';
 
   try{
-    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQvDGyPGmb_stXhG2i9ZY17A_m0nAOaSIjIgZBSrwTdbQqBYiN55swc3QF1my7HyZNHNpe2OjcFIepgMxX7uedD-ZxHL34uZwkLKBLpfOv6iBGMfUj5wDsgLDR9RGmNqNZVkB8UoV92Xs5-u2KKfspoKZRXrpm2yXt3hh1LYEwzps-z2BDLzUvoE2_NfeuzlCL4yT4I4PcT71Zn5dZDl756Br61NVW6tOVqXjufo8Ihmv-jlroe7f0fhzaSDgGjMwMJ26Qulm8Z4ZUYl6MAmT66onzB-Tew4ZXAE_RW&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace with your Apps Script URL
+    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrS7glV2n_oGT3Pv1UJ8PT2660qbl4o_gthGQ7TJcZ6W6sfVV2nbAyVMrqIyfn9FW1ove6xyW1byos7qT92vMsqDWw1VfByRmdqQHlEgqv0polchmQhVKyJR4FfiktSvA6TzLbyghjZ2e8tMkp_0zQGcXdo9K7yuo9F3fcEofjwiuImkEoLe3APU5JeZdGWyBiuV8sSKETtGcAa9xeAV-NUX8IzwzkDVgbA1TOymIYNUmRCgcNslXGefV17P646CyAgichtJ2MjFO4VC0tq8h3uzhhMO6QxRCy2gA415&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace with your Apps Script URL
     profiles = await res.json();
 
     // Once profiles loaded, remove loading
