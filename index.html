@@ -63,11 +63,21 @@ async function loadProfiles(){
   container.innerHTML = '<div id="loading">✨ Loading biodata... ✨</div>';
 
   try{
-    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQXrutZx8GnbVnmTGEvG0ERUqF1dGBOpkpH4SmBZAYCmvT4uTXP5JZZEzEmymaDLWT2XbKKxcsZ_FW447wxC74_sw27c7ACwD_gfNbqmgAYdwXaEPefrjt6FmIMPt04R7yAyt4CgrMiJIlPHk8pszzJo5XN7r0BgHuCJPwP6ob9PYg8StBEeAgjgyClWaIoeFDjZ85zYfp2fPYYBMhCvN-9V-_RZN9aqnczsc8MODiYWm8L90E7WOHfTvtZPxuBAGo7wwZifG7kjm_KbUr8qaW1mEKRWRxa683yUUib&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N");
-    profiles = await res.json();
+    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQXrutZx8GnbVnmTGEvG0ERUqF1dGBOpkpH4SmBZAYCmvT4uTXP5JZZEzEmymaDLWT2XbKKxcsZ_FW447wxC74_sw27c7ACwD_gfNbqmgAYdwXaEPefrjt6FmIMPt04R7yAyt4CgrMiJIlPHk8pszzJo5XN7r0BgHuCJPwP6ob9PYg8StBEeAgjgyClWaIoeFDjZ85zYfp2fPYYBMhCvN-9V-_RZN9aqnczsc8MODiYWm8L90E7WOHfTvtZPxuBAGo7wwZifG7kjm_KbUr8qaW1mEKRWRxa683yUUib&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace this
+    let data = await res.json();
 
-    // Reverse to show newest first
-    profiles.reverse();
+    // Normalize gender and age
+    profiles = data.map(p=>{
+      return {
+        ...p,
+        gender: p.gender.trim(),
+        age: Number(p.age),
+        time: new Date(p.time)
+      };
+    });
+
+    // Sort by newest first
+    profiles.sort((a,b)=>b.time - a.time);
 
     renderProfiles();
   }catch(e){
@@ -107,8 +117,8 @@ function renderProfiles(){
   let filteredCount=0;
 
   profiles.forEach(profile=>{
-    if(genderFilter!=="all" && profile.gender!==genderFilter) return;
-    if(profile.age<minAge || profile.age>maxAge) return;
+    if(genderFilter!=="all" && profile.gender !== genderFilter) return;
+    if(profile.age < minAge || profile.age > maxAge) return;
     if(selectedRegions.length>0 && !selectedRegions.includes(profile.region)) return;
 
     filteredCount++;
