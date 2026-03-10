@@ -1,14 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Biodata Directory</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Biodata List</title>
 
 <style>
+
 body{
-font-family: Arial;
+font-family:Arial;
 margin:20px;
-background:#f5f5f5;
+background:#f4f4f4;
+}
+
+h1{
+text-align:center;
+}
+
+.controls{
+margin-bottom:20px;
+background:white;
+padding:15px;
+border-radius:8px;
 }
 
 .profile{
@@ -22,49 +36,35 @@ box-shadow:0 2px 5px rgba(0,0,0,0.1);
 button{
 margin-top:10px;
 padding:6px 10px;
-border:none;
-background:#007bff;
-color:white;
-border-radius:5px;
+cursor:pointer;
 }
 
-.filters{
-background:white;
-padding:15px;
-margin-bottom:20px;
-border-radius:8px;
-}
-
-a{
-color:#007bff;
-text-decoration:none;
-}
 </style>
 </head>
 
 <body>
 
-<h2>Biodata Directory</h2>
+<h1>Biodata Listings</h1>
 
-<div class="filters">
+<div class="controls">
 
 Gender:
-<select id="genderFilter">
+
+<select id="genderFilter" onchange="renderProfiles()">
 <option value="all">All</option>
-<option value="Male">Male</option>
-<option value="Female">Female</option>
+<option value="male">Male</option>
+<option value="female">Female</option>
 </select>
 
 <br><br>
 
-Age:
-<input type="range" id="minAge" min="18" max="60" value="18">
-<input type="range" id="maxAge" min="18" max="60" value="60">
+Age Range:
 
-<div>
-Min: <span id="minAgeVal">18</span>
-Max: <span id="maxAgeVal">60</span>
-</div>
+<input type="range" id="minAge" min="18" max="60" value="18" oninput="updateAge()">
+
+<input type="range" id="maxAge" min="18" max="60" value="60" oninput="updateAge()">
+
+<span id="ageDisplay">18 - 60</span>
 
 </div>
 
@@ -72,64 +72,74 @@ Max: <span id="maxAgeVal">60</span>
 
 <script>
 
-const profiles = [
+let profiles = [];
 
-{
-age:25,
-gender:"Male",
-bio:`Name: Ahmed
-Age: 25
-Location: Chicago
-Education: MBA
-Height: 5'10
-Family: Pakistani
-Contact: 3125559876
-Looking for educated partner`
-},
+async function loadProfiles(){
 
-{
-age:23,
-gender:"Female",
-bio:`Name: Ayesha
-Age: 23
-Location: Dallas
-Education: Doctor
-Height: 5'4
-Family: Pakistani
-Contact: 4695551234
-Practicing Muslim`
+const res = await fetch("PASTE_YOUR_APPS_SCRIPT_URL_HERE");
+
+profiles = await res.json();
+
+renderProfiles();
+
 }
 
-];
+function updateAge(){
 
-function linkPhones(text){
-return text.replace(/(\+?\d[\d\s\-]{7,}\d)/g,'<a href="tel:$1">$1</a>');
+let min = document.getElementById("minAge").value;
+let max = document.getElementById("maxAge").value;
+
+if(parseInt(min) > parseInt(max)){
+[max,min] = [min,max];
+}
+
+document.getElementById("ageDisplay").innerText = min + " - " + max;
+
+renderProfiles();
+
+}
+
+function makePhoneClickable(text){
+
+return text.replace(/(\+?\d[\d\s\-]{7,}\d)/g,function(phone){
+let clean = phone.replace(/\s+/g,"");
+return `<a href="tel:${clean}">${phone}</a>`;
+});
+
 }
 
 function renderProfiles(){
 
 const genderFilter = document.getElementById("genderFilter").value;
-const minAge = parseInt(document.getElementById("minAge").value);
-const maxAge = parseInt(document.getElementById("maxAge").value);
+
+let minAge = parseInt(document.getElementById("minAge").value);
+let maxAge = parseInt(document.getElementById("maxAge").value);
+
+if(minAge > maxAge){
+[minAge,maxAge] = [maxAge,minAge];
+}
 
 const container = document.getElementById("profiles");
+
 container.innerHTML="";
 
 profiles.forEach(profile=>{
 
 if(genderFilter !== "all" && profile.gender !== genderFilter) return;
+
 if(profile.age < minAge || profile.age > maxAge) return;
 
 const lines = profile.bio.split("\n");
 
-const preview = lines.slice(0,5).join("<br>");
-const full = lines.join("<br>");
+const preview = makePhoneClickable(lines.slice(0,5).join("<br>"));
+const full = makePhoneClickable(lines.join("<br>"));
 
 const div = document.createElement("div");
+
 div.className="profile";
 
-div.innerHTML = `
-<div class="bio">${linkPhones(preview)}</div>
+div.innerHTML=`
+<div class="bio">${preview}</div>
 <button>Read Full Biodata</button>
 `;
 
@@ -138,16 +148,16 @@ const bio = div.querySelector(".bio");
 
 let expanded=false;
 
-btn.onclick = () => {
+btn.onclick = ()=>{
 
 if(!expanded){
-bio.innerHTML = linkPhones(full);
-btn.innerText="Show Less";
+bio.innerHTML = full;
+btn.innerText = "Show Less";
 expanded=true;
 }
 else{
-bio.innerHTML = linkPhones(preview);
-btn.innerText="Read Full Biodata";
+bio.innerHTML = preview;
+btn.innerText = "Read Full Biodata";
 expanded=false;
 }
 
@@ -159,19 +169,7 @@ container.appendChild(div);
 
 }
 
-document.getElementById("genderFilter").onchange = renderProfiles;
-
-document.getElementById("minAge").oninput = ()=>{
-document.getElementById("minAgeVal").innerText=document.getElementById("minAge").value;
-renderProfiles();
-};
-
-document.getElementById("maxAge").oninput = ()=>{
-document.getElementById("maxAgeVal").innerText=document.getElementById("maxAge").value;
-renderProfiles();
-};
-
-renderProfiles();
+loadProfiles();
 
 </script>
 
