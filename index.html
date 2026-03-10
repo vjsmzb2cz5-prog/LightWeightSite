@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Match Profiles</title>
+
+<style>
+body{
+  font-family: Arial;
+  max-width:600px;
+  margin:auto;
+  padding:20px;
+}
+
+.profile{
+  border:1px solid #ddd;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+}
+
+.bio{
+  display:none;
+  margin-top:8px;
+  padding:8px;
+  background:#f5f5f5;
+  border-radius:6px;
+}
+
+button{
+  margin-top:6px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Profiles</h2>
+
+Age Filter:
+<input type="range" id="ageSlider" min="18" max="50" value="50">
+<span id="ageValue">50</span>
+
+<div id="results"></div>
+
+<script>
+
+const profiles = [
+ {id:1, age:23, bio:"Ali - Engineer - Atlanta"},
+ {id:2, age:29, bio:"Sara - Doctor - Houston"},
+ {id:3, age:34, bio:"Ahmed - Business - Dallas"},
+ {id:4, age:26, bio:"Fatima - Teacher - Chicago"}
+]
+
+const slider = document.getElementById("ageSlider")
+const results = document.getElementById("results")
+const ageValue = document.getElementById("ageValue")
+
+function toggleBio(id){
+ const el = document.getElementById("bio-"+id)
+ el.style.display = el.style.display === "none" ? "block" : "none"
+}
+
+function render(){
+
+ const maxAge = slider.value
+ ageValue.innerText = maxAge
+
+ const filtered = profiles.filter(p => p.age <= maxAge)
+
+ results.innerHTML = filtered.map(p => `
+   <div class="profile">
+     <b>Profile #${p.id}</b><br>
+     Age: ${p.age}<br>
+     <button onclick="toggleBio(${p.id})">View Biodata</button>
+     <div class="bio" id="bio-${p.id}">
+       ${p.bio}
+     </div>
+   </div>
+ `).join("")
+}
+
+slider.addEventListener("input", render)
+
+render()
+
+</script>
+
+</body>
+</html>
