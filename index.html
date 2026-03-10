@@ -64,7 +64,7 @@ async function loadProfiles(){
   container.innerHTML = '<div id="loading">✨ Loading biodata... ✨</div>';
 
   try{
-    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQNr4nxSHib5je_PzZ4O5HdH3_xp6z8WORs0xhRNigKfiltpBDMtm58tr15KIgSt8X9xMggqgDVC5dYE-FyI-KwzwmkAlaOfldL7wwTfBamrgmbs9Pr086lQ1XR05bA5JeWUVtG6l2hB-aFgmKpAvsdT-iki_xn62sgxVNs_bNvhg3hZKoQWcfa1QhiSjS_ScbDois9PatiaGstIPhY12Suhuf02YURt1ChWIhO1_hhJnO9__yEEmHGwiZ-BgBoO73TxTJ3UqzKnf_fav-piB-JRei0eWSwxwWR9mkE&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace with your JSON link
+    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrTLg6hjp28OePwKrO0ckQdMrUnHy0qbWxd-nFj68XKcUOGxwV0aDRodD9ML-9gqRvrzz_ZXiqPoHeTC5jzFPLWSfC1vHdzVP77mUM0Z6liLpts44edg5i4daq-ZSqYBGMbln-VX9hd_bUgt3ayo5rkf61pdSFaNwEw6ZDnUG1Lh9zqAkHxQyV0B0WRY-j8oQoFp4YFgUnHotOruAbjtG_0vH53OD3Ky1HPFBYo5v7OrWSsWatix3LqIFkubFd7VkQyI8GCC83Mn8DsNYDU803z54dyn0bHPrskwJ4bs&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace with your JSON link
     let data = await res.json();
 
     // Keep original "Profile for" without normalizing
@@ -165,3 +165,4 @@ loadProfiles();
 </script>
 </body>
 </html>
+
