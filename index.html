@@ -63,7 +63,7 @@ async function loadProfiles(){
   container.innerHTML = '<div id="loading">✨ Loading biodata... ✨</div>';
 
   try{
-    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQXrutZx8GnbVnmTGEvG0ERUqF1dGBOpkpH4SmBZAYCmvT4uTXP5JZZEzEmymaDLWT2XbKKxcsZ_FW447wxC74_sw27c7ACwD_gfNbqmgAYdwXaEPefrjt6FmIMPt04R7yAyt4CgrMiJIlPHk8pszzJo5XN7r0BgHuCJPwP6ob9PYg8StBEeAgjgyClWaIoeFDjZ85zYfp2fPYYBMhCvN-9V-_RZN9aqnczsc8MODiYWm8L90E7WOHfTvtZPxuBAGo7wwZifG7kjm_KbUr8qaW1mEKRWRxa683yUUib&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace this
+    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQNr4nxSHib5je_PzZ4O5HdH3_xp6z8WORs0xhRNigKfiltpBDMtm58tr15KIgSt8X9xMggqgDVC5dYE-FyI-KwzwmkAlaOfldL7wwTfBamrgmbs9Pr086lQ1XR05bA5JeWUVtG6l2hB-aFgmKpAvsdT-iki_xn62sgxVNs_bNvhg3hZKoQWcfa1QhiSjS_ScbDois9PatiaGstIPhY12Suhuf02YURt1ChWIhO1_hhJnO9__yEEmHGwiZ-BgBoO73TxTJ3UqzKnf_fav-piB-JRei0eWSwxwWR9mkE&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace this
     let data = await res.json();
 
     // Normalize gender and age
@@ -160,3 +160,4 @@ loadProfiles();
 </script>
 </body>
 </html>
+
