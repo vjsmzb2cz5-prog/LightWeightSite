@@ -18,6 +18,7 @@ button{margin-top:10px;padding:6px 10px;cursor:pointer;}
 .age-slider-container input[type=range]{position:absolute;width:100%;pointer-events:none;}
 .age-slider-container input[type=range]::-webkit-slider-thumb{pointer-events:auto;}
 .age-range-display{margin-top:5px;}
+.profile-header { font-weight:bold; margin-bottom:8px; color:#333; }
 </style>
 </head>
 <body>
@@ -64,7 +65,7 @@ async function loadProfiles(){
   container.innerHTML = '<div id="loading">✨ Loading biodata... ✨</div>';
 
   try{
-    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrTLg6hjp28OePwKrO0ckQdMrUnHy0qbWxd-nFj68XKcUOGxwV0aDRodD9ML-9gqRvrzz_ZXiqPoHeTC5jzFPLWSfC1vHdzVP77mUM0Z6liLpts44edg5i4daq-ZSqYBGMbln-VX9hd_bUgt3ayo5rkf61pdSFaNwEw6ZDnUG1Lh9zqAkHxQyV0B0WRY-j8oQoFp4YFgUnHotOruAbjtG_0vH53OD3Ky1HPFBYo5v7OrWSsWatix3LqIFkubFd7VkQyI8GCC83Mn8DsNYDU803z54dyn0bHPrskwJ4bs&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace with your JSON link
+    const res = await fetch("YOUR_JSON_LINK_HERE"); // replace with your JSON link
     let data = await res.json();
 
     // Keep original "Profile for" without normalizing
@@ -134,7 +135,13 @@ function renderProfiles(){
 
     const div = document.createElement("div");
     div.className="profile";
-    div.innerHTML = `<div class="bio">${preview}</div><button>Read Full Biodata</button>`;
+    div.innerHTML = `
+      <div class="profile-header">
+        ${profile.genderLabel} | Age: ${profile.age} | Region: ${profile.region}
+      </div>
+      <div class="bio">${preview}</div>
+      <button>Read Full Biodata</button>
+    `;
 
     const btn = div.querySelector("button");
     const bio = div.querySelector(".bio");
@@ -165,4 +172,3 @@ loadProfiles();
 </script>
 </body>
 </html>
-
