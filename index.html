@@ -19,19 +19,25 @@ button{margin-top:10px;padding:6px 10px;cursor:pointer;}
   -webkit-appearance:none;
   position:absolute;
   width:100%;
-  pointer-events:none;
   height:8px;
   border-radius:5px;
   background:transparent;
+  top:50%;
+  transform:translateY(-50%);
 }
 .range-slider::-webkit-slider-thumb{
   -webkit-appearance:none;
-  pointer-events:auto;
   width:20px; height:20px;
   border-radius:50%;
   background:#2196F3;
   cursor:pointer;
-  margin-top:-6px;
+  position:relative;
+}
+.range-slider::-moz-range-thumb{
+  width:20px; height:20px;
+  border-radius:50%;
+  background:#2196F3;
+  cursor:pointer;
 }
 .slider-track{
   position:absolute;
@@ -70,8 +76,8 @@ Age Range: <span id="ageDisplay">18 - 60</span>
 <div class="age-slider-container">
   <div class="slider-track"></div>
   <div class="slider-range" id="sliderRange"></div>
-  <input type="range" min="18" max="60" value="18" id="ageMin" oninput="updateAgeSlider()">
-  <input type="range" min="18" max="60" value="60" id="ageMax" oninput="updateAgeSlider()">
+  <input type="range" min="18" max="60" value="18" id="ageMin" class="range-slider" oninput="updateAgeSlider()" style="z-index:2;">
+  <input type="range" min="18" max="60" value="60" id="ageMax" class="range-slider" oninput="updateAgeSlider()" style="z-index:1;">
 </div>
 
 <br><br>
@@ -92,17 +98,25 @@ let profiles=[];
 
 // Double slider update
 function updateAgeSlider(){
-  let min = parseInt(document.getElementById("ageMin").value);
-  let max = parseInt(document.getElementById("ageMax").value);
-  if(min>max)[min,max]=[max,min];
+  const minSlider = document.getElementById("ageMin");
+  const maxSlider = document.getElementById("ageMax");
+
+  let min = parseInt(minSlider.value);
+  let max = parseInt(maxSlider.value);
+
+  if(min > max){ [min, max] = [max, min]; }
+
+  minSlider.value = min;
+  maxSlider.value = max;
+
   document.getElementById("ageDisplay").innerText = min + " - " + max;
 
   // Update range highlight
   const sliderRange = document.getElementById("sliderRange");
-  const minPercent = (min-18)/(60-18)*100;
-  const maxPercent = (max-18)/(60-18)*100;
-  sliderRange.style.left = minPercent+"%";
-  sliderRange.style.width = (maxPercent-minPercent)+"%";
+  const minPercent = ((min - 18) / (60 - 18)) * 100;
+  const maxPercent = ((max - 18) / (60 - 18)) * 100;
+  sliderRange.style.left = minPercent + "%";
+  sliderRange.style.width = (maxPercent - minPercent) + "%";
 
   renderProfiles();
 }
@@ -120,7 +134,7 @@ async function loadProfiles(){
   const container=document.getElementById("profiles");
   container.innerHTML='<div id="loading">✨ Loading biodata... ✨</div>';
   try{
-    const res=await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQBzUTQHAw-uuqYVH_cXclBCvQOj5bNiWqixgijj-yyMSE2XPyl9yDqPVrV-CKf9l-VNPsx2648I81zbWh0JnI2i7VyZ8qtKwCo1-Nbfw7vl0eFR-UrnW_qmip0pONDoUPU4Vxr0ByiFNjtKi2BnP9cLmgXflNc8RboLPWdTSDB6Rn9wH-HMwVPvTXZ4pLXBi52oi7IPwip4aZUPkdKS3fSVCEF26MMCXl8rMBKbPOHpgnX6dg9goG4d2CVCvr0uS_KDxxFMqJZKmD4kWTooToT9F1wbZdHW7lAWCjJ&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // replace
+    const res=await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQBzUTQHAw-uuqYVH_cXclBCvQOj5bNiWqixgijj-yyMSE2XPyl9yDqPVrV-CKf9l-VNPsx2648I81zbWh0JnI2i7VyZ8qtKwCo1-Nbfw7vl0eFR-UrnW_qmip0pONDoUPU4Vxr0ByiFNjtKi2BnP9cLmgXflNc8RboLPWdTSDB6Rn9wH-HMwVPvTXZ4pLXBi52oi7IPwip4aZUPkdKS3fSVCEF26MMCXl8rMBKbPOHpgnX6dg9goG4d2CVCvr0uS_KDxxFMqJZKmD4kWTooToT9F1wbZdHW7lAWCjJ&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // replace with your JSON link
     const data=await res.json();
 
     profiles=data
@@ -173,7 +187,7 @@ function renderProfiles(){
     const btn=div.querySelector("button");
     const bio=div.querySelector(".bio");
     let expanded=false;
-    btn.onclick=()=>{
+    btn.onclick=()=>{ 
       if(!expanded){bio.innerHTML=full; btn.innerText="Show Less"; expanded=true;}
       else{bio.innerHTML=preview; btn.innerText="Read Full Biodata"; expanded=false;}
     };
