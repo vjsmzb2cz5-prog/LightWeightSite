@@ -14,39 +14,45 @@ box-shadow:0 2px 5px rgba(0,0,0,0.1);opacity:0;transition:opacity 0.5s ease-in;}
 button{margin-top:10px;padding:6px 10px;cursor:pointer;}
 #loading{font-size:18px;text-align:center;padding:20px;animation:blink 1s infinite;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.5;}}
-.age-slider-container{position:relative;height:50px;}
-.range-slider{
-  -webkit-appearance:none;
-  position:absolute;
-  width:100%;
-  height:8px;
-  border-radius:5px;
-  background:transparent;
-  top:50%;
-  transform:translateY(-50%);
-}
-.range-slider::-webkit-slider-thumb{
-  -webkit-appearance:none;
-  width:20px; height:20px;
-  border-radius:50%;
-  background:#2196F3;
-  cursor:pointer;
-  position:relative;
-}
-.range-slider::-moz-range-thumb{
-  width:20px; height:20px;
-  border-radius:50%;
-  background:#2196F3;
-  cursor:pointer;
-}
+/* Double slider */
+.age-slider-container{position:relative;height:50px;margin-top:10px;}
 .slider-track{
   position:absolute;
   height:8px;
   border-radius:5px;
-  background:#ccc;
   width:100%;
   top:50%;
   transform:translateY(-50%);
+  background:#dadae5;
+}
+input[type=range]{
+  position:absolute;
+  width:100%;
+  height:8px;
+  top:50%;
+  transform:translateY(-50%);
+  background:transparent;
+  -webkit-appearance:none;
+  pointer-events:none; /* only thumbs clickable */
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  height:20px;
+  width:20px;
+  border-radius:50%;
+  background:#2196F3;
+  cursor:pointer;
+  pointer-events:auto;
+  margin-top:0px;
+  border:none;
+}
+input[type=range]::-moz-range-thumb{
+  height:20px;
+  width:20px;
+  border-radius:50%;
+  background:#2196F3;
+  cursor:pointer;
+  border:none;
 }
 .slider-range{
   position:absolute;
@@ -55,6 +61,8 @@ button{margin-top:10px;padding:6px 10px;cursor:pointer;}
   background:#2196F3;
   top:50%;
   transform:translateY(-50%);
+  left:0;
+  width:0;
 }
 .age-range-display{margin-top:5px;}
 </style>
@@ -76,8 +84,8 @@ Age Range: <span id="ageDisplay">18 - 60</span>
 <div class="age-slider-container">
   <div class="slider-track"></div>
   <div class="slider-range" id="sliderRange"></div>
-  <input type="range" min="18" max="60" value="18" id="ageMin" class="range-slider" oninput="updateAgeSlider()" style="z-index:2;">
-  <input type="range" min="18" max="60" value="60" id="ageMax" class="range-slider" oninput="updateAgeSlider()" style="z-index:1;">
+  <input type="range" min="18" max="60" value="18" id="ageMin" oninput="updateAgeSlider()">
+  <input type="range" min="18" max="60" value="60" id="ageMax" oninput="updateAgeSlider()">
 </div>
 
 <br><br>
@@ -96,25 +104,20 @@ Region:
 <script>
 let profiles=[];
 
-// Double slider update
+// Update slider and highlight
 function updateAgeSlider(){
-  const minSlider = document.getElementById("ageMin");
-  const maxSlider = document.getElementById("ageMax");
-
-  let min = parseInt(minSlider.value);
-  let max = parseInt(maxSlider.value);
-
-  if(min > max){ [min, max] = [max, min]; }
-
-  minSlider.value = min;
-  maxSlider.value = max;
+  const minSlider=document.getElementById("ageMin");
+  const maxSlider=document.getElementById("ageMax");
+  let min=parseInt(minSlider.value);
+  let max=parseInt(maxSlider.value);
+  if(min>max){ [min,max] = [max,min]; minSlider.value=min; maxSlider.value=max; }
 
   document.getElementById("ageDisplay").innerText = min + " - " + max;
 
-  // Update range highlight
-  const sliderRange = document.getElementById("sliderRange");
-  const minPercent = ((min - 18) / (60 - 18)) * 100;
-  const maxPercent = ((max - 18) / (60 - 18)) * 100;
+  // Update highlight between thumbs
+  const sliderRange=document.getElementById("sliderRange");
+  const minPercent=(min-18)/(60-18)*100;
+  const maxPercent=(max-18)/(60-18)*100;
   sliderRange.style.left = minPercent + "%";
   sliderRange.style.width = (maxPercent - minPercent) + "%";
 
@@ -134,21 +137,17 @@ async function loadProfiles(){
   const container=document.getElementById("profiles");
   container.innerHTML='<div id="loading">✨ Loading biodata... ✨</div>';
   try{
-    const res=await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQBzUTQHAw-uuqYVH_cXclBCvQOj5bNiWqixgijj-yyMSE2XPyl9yDqPVrV-CKf9l-VNPsx2648I81zbWh0JnI2i7VyZ8qtKwCo1-Nbfw7vl0eFR-UrnW_qmip0pONDoUPU4Vxr0ByiFNjtKi2BnP9cLmgXflNc8RboLPWdTSDB6Rn9wH-HMwVPvTXZ4pLXBi52oi7IPwip4aZUPkdKS3fSVCEF26MMCXl8rMBKbPOHpgnX6dg9goG4d2CVCvr0uS_KDxxFMqJZKmD4kWTooToT9F1wbZdHW7lAWCjJ&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // replace with your JSON link
+    const res=await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQBzUTQHAw-uuqYVH_cXclBCvQOj5bNiWqixgijj-yyMSE2XPyl9yDqPVrV-CKf9l-VNPsx2648I81zbWh0JnI2i7VyZ8qtKwCo1-Nbfw7vl0eFR-UrnW_qmip0pONDoUPU4Vxr0ByiFNjtKi2BnP9cLmgXflNc8RboLPWdTSDB6Rn9wH-HMwVPvTXZ4pLXBi52oi7IPwip4aZUPkdKS3fSVCEF26MMCXl8rMBKbPOHpgnX6dg9goG4d2CVCvr0uS_KDxxFMqJZKmD4kWTooToT9F1wbZdHW7lAWCjJ&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N");
     const data=await res.json();
-
-    profiles=data
-      .filter(p=>p['Profile for'] && p['Age'])
-      .map(p=>{
-        return {
-          genderLabel:p['Profile for'].trim(),
-          age:Number(p['Age']),
-          region:p['Country of Residence'],
-          bio:p['Profile/BioData']||"",
-          time:new Date(p['Timestamp'])
-        };
-      });
-
+    profiles=data.filter(p=>p['Profile for'] && p['Age']).map(p=>{
+      return {
+        genderLabel:p['Profile for'].trim(),
+        age:Number(p['Age']),
+        region:p['Country of Residence'],
+        bio:p['Profile/BioData']||"",
+        time:new Date(p['Timestamp'])
+      };
+    });
     profiles.sort((a,b)=>b.time-a.time);
     updateAgeSlider();
   }catch(e){
