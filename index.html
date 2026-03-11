@@ -11,7 +11,7 @@ h1{text-align:center;}
 .controls{margin-bottom:20px;background:white;padding:15px;border-radius:8px;}
 .profile{background:white;padding:15px;margin-bottom:15px;border-radius:8px;
 box-shadow:0 2px 5px rgba(0,0,0,0.1);opacity:0;transition:opacity 0.5s ease-in;}
-.profile-header{margin-bottom:8px;color:#333;}
+.profile-header{font-weight:bold;margin-bottom:8px;}
 button{margin-top:10px;padding:6px 10px;cursor:pointer;}
 #loading{font-size:18px;text-align:center;padding:20px;animation:blink 1s infinite;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:0.5;}}
@@ -19,10 +19,19 @@ button{margin-top:10px;padding:6px 10px;cursor:pointer;}
 .age-slider-container input[type=range]{position:absolute;width:100%;pointer-events:none;}
 .age-slider-container input[type=range]::-webkit-slider-thumb{pointer-events:auto;}
 .age-range-display{margin-top:5px;}
-/* Slider highlight range */
-input[type=range] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; background: linear-gradient(to right, #2196F3 0%, #2196F3 0%, #ccc 0%, #ccc 100%); outline: none;}
-input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #2196F3; cursor: pointer; border: 2px solid #fff; margin-top: -7px;}
-input[type=range]::-moz-range-thumb { width: 20px; height: 20px; border-radius: 50%; background: #2196F3; cursor: pointer; border: 2px solid #fff;}
+/* Slider highlight fix */
+input[type=range]{
+  -webkit-appearance:none;
+  width:100%;
+  height:8px;
+  border-radius:5px;
+  background:linear-gradient(to right, #2196F3 0%, #2196F3 100%);
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  appearance:none;
+  width:20px;height:20px;border-radius:50%;background:#2196F3;cursor:pointer;margin-top:-6px;
+}
 </style>
 </head>
 <body>
@@ -63,21 +72,47 @@ Region:
 <script>
 let profiles = [];
 
+// Update slider background
+function updateSliderBackground() {
+  const min = parseInt(document.getElementById("ageMin").value);
+  const max = parseInt(document.getElementById("ageMax").value);
+  const minPercent = (min-18)/(60-18)*100;
+  const maxPercent = (max-18)/(60-18)*100;
+  document.getElementById("ageMin").style.background = `linear-gradient(to right, #2196F3 0%, #2196F3 ${minPercent}%, #ccc ${minPercent}%, #ccc 100%)`;
+  document.getElementById("ageMax").style.background = `linear-gradient(to right, #2196F3 0%, #2196F3 ${maxPercent}%, #ccc ${maxPercent}%, #ccc 100%)`;
+}
+
+// Update age slider display
+function updateAgeSlider(){
+  let min = parseInt(document.getElementById("ageMin").value);
+  let max = parseInt(document.getElementById("ageMax").value);
+  if(min>max)[min,max]=[max,min];
+  document.getElementById("ageDisplay").innerText = min + " - " + max;
+  updateSliderBackground();
+  renderProfiles();
+}
+
+// Make phone numbers clickable
+function makePhoneClickable(text){
+  return text.replace(/(\+?\d[\d\s\-]{7,}\d)/g,function(phone){
+    let clean = phone.replace(/\s+/g,"");
+    return `<a href="tel:${clean}">${phone}</a>`;
+  });
+}
+
 // Fetch profiles from Apps Script
 async function loadProfiles(){
   const container = document.getElementById("profiles");
   container.innerHTML = '<div id="loading">✨ Loading biodata... ✨</div>';
 
   try{
-    const res = await fetch("YOUR_JSON_LINK_HERE"); // Replace with your JSON link
-    let data = await res.json();
+    const res = await fetch("YOUR_REAL_JSON_LINK_HERE"); // Replace with your Apps Script JSON link
+    const data = await res.json();
 
-    // Keep original "Profile for" without normalizing
     profiles = data
       .filter(p => p['Profile for'] && p['Age'])
       .map(p=>{
         return {
-          ...p,
           genderLabel: p['Profile for'].trim(),
           age: Number(p['Age']),
           region: p['Country of Residence'],
@@ -89,38 +124,12 @@ async function loadProfiles(){
     // Sort newest first
     profiles.sort((a,b)=>b.time - a.time);
 
-    updateAgeSlider(); // also renders
+    updateSliderBackground();
+    renderProfiles();
   }catch(e){
     container.innerHTML = "❌ Could not load profiles.";
     console.error(e);
   }
-}
-
-// Update age slider display and highlight
-function updateAgeSlider(){
-  let min = parseInt(document.getElementById("ageMin").value);
-  let max = parseInt(document.getElementById("ageMax").value);
-  if(min>max)[min,max]=[max,min];
-  document.getElementById("ageDisplay").innerText = min + " - " + max;
-
-  // Update slider track highlight
-  const minSlider = document.getElementById("ageMin");
-  const maxSlider = document.getElementById("ageMax");
-  const range = maxSlider.max - maxSlider.min;
-  const minPercent = ((min - minSlider.min)/range)*100;
-  const maxPercent = ((max - minSlider.min)/range)*100;
-  minSlider.style.background = `linear-gradient(to right, #2196F3 ${minPercent}%, #ccc ${minPercent}%, #ccc 100%)`;
-  maxSlider.style.background = `linear-gradient(to right, #2196F3 ${minPercent}%, #2196F3 ${maxPercent}%, #ccc ${maxPercent}%, #ccc 100%)`;
-
-  renderProfiles();
-}
-
-// Make phone numbers clickable
-function makePhoneClickable(text){
-  return text.replace(/(\+?\d[\d\s\-]{7,}\d)/g,function(phone){
-    let clean = phone.replace(/\s+/g,"");
-    return `<a href="tel:${clean}">${phone}</a>`;
-  });
 }
 
 // Render profiles with filters
@@ -149,13 +158,7 @@ function renderProfiles(){
 
     const div = document.createElement("div");
     div.className="profile";
-    div.innerHTML = `
-      <div class="profile-header">
-        <strong>${profile.genderLabel}</strong> | <strong>Age:</strong> ${profile.age} | <strong>Region:</strong> ${profile.region}
-      </div>
-      <div class="bio">${preview}</div>
-      <button>Read Full Biodata</button>
-    `;
+    div.innerHTML = `<div class="profile-header">${profile.genderLabel} | Age: ${profile.age} | Region: ${profile.region}</div><div class="bio">${preview}</div><button>Read Full Biodata</button>`;
 
     const btn = div.querySelector("button");
     const bio = div.querySelector(".bio");
@@ -182,6 +185,7 @@ function renderProfiles(){
   }
 }
 
+// Initial load
 loadProfiles();
 </script>
 </body>
