@@ -106,7 +106,7 @@ async function loadProfiles(){
   container.innerHTML = '<div id="loading">✨ Loading biodata... ✨</div>';
 
   try{
-    const res = await fetch("YOUR_REAL_JSON_LINK_HERE"); // Replace with your Apps Script JSON link
+    const res = await fetch("https://script.googleusercontent.com/macros/echo?user_content_key=AY5xjrQBzUTQHAw-uuqYVH_cXclBCvQOj5bNiWqixgijj-yyMSE2XPyl9yDqPVrV-CKf9l-VNPsx2648I81zbWh0JnI2i7VyZ8qtKwCo1-Nbfw7vl0eFR-UrnW_qmip0pONDoUPU4Vxr0ByiFNjtKi2BnP9cLmgXflNc8RboLPWdTSDB6Rn9wH-HMwVPvTXZ4pLXBi52oi7IPwip4aZUPkdKS3fSVCEF26MMCXl8rMBKbPOHpgnX6dg9goG4d2CVCvr0uS_KDxxFMqJZKmD4kWTooToT9F1wbZdHW7lAWCjJ&lib=MXMheI6iOWxfrTeWdDiyZ-ViI8XQUcE2N"); // Replace with your Apps Script JSON link
     const data = await res.json();
 
     profiles = data
@@ -190,3 +190,4 @@ loadProfiles();
 </script>
 </body>
 </html>
+
