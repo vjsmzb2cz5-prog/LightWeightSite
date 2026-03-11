@@ -133,15 +133,15 @@ function renderProfiles(){
     const preview = makePhoneClickable(lines.slice(0,5).join("<br>"));
     const full = makePhoneClickable(lines.join("<br>"));
 
-    const div = document.createElement("div");
-    div.className="profile";
-    div.innerHTML = `
-      <div class="profile-header">
-        ${profile.genderLabel} | Age: ${profile.age} | Region: ${profile.region}
-      </div>
-      <div class="bio">${preview}</div>
-      <button>Read Full Biodata</button>
-    `;
+   const div = document.createElement("div");
+div.className = "profile";
+div.innerHTML = `
+  <div class="profile-header">
+    <strong>${profile.genderLabel}</strong> | <strong>Age:</strong> ${profile.age} | <strong>Region:</strong> ${profile.region}
+  </div>
+  <div class="bio">${preview}</div>
+  <button>Read Full Biodata</button>
+`;
 
     const btn = div.querySelector("button");
     const bio = div.querySelector(".bio");
@@ -172,3 +172,4 @@ loadProfiles();
 </script>
 </body>
 </html>
+
